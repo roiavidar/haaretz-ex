@@ -1,0 +1,23 @@
+.Carousel {
+    width: 100%;
+    max-width: 100%;
+}
+
+.Carousel-items .Article {
+    display: inline-block;
+}
+
+.Carousel-button {
+    width: 30px;
+    height: 100%;
+    border: 1px solid black;
+}
+
+.Carousel-button--left {
+    float:left;
+}
+
+.Carousel-button--right {
+    float: right;
+}
+
