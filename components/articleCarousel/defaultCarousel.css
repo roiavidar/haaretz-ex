@@ -3,21 +3,27 @@
     max-width: 100%;
 }
 
-.Carousel-items .Article {
+.CarouselItems .Article {
     display: inline-block;
+    margin: 0;
+}
+
+.CarouselItems {
+    text-align: justify;
+    display: flex;
+    justify-content: space-around;
 }
 
 .Carousel-button {
-    width: 30px;
+    width: 50px;
     height: 100%;
     border: 1px solid black;
 }
 
 .Carousel-button--left {
-    float:left;
+    float: left;
 }
 
 .Carousel-button--right {
     float: right;
 }
-

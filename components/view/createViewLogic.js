@@ -1,50 +1,55 @@
-// change switch to object!
 (function() {
-    App.createView = function(viewType) {
-        cleanView();
-        switch (viewType) {
-            case "articleList":
-                createArticleListView();
-                break;
-            case "carousel":
-                createArticleCarouselView();
-                break;
-            case "carouselWithBanner":
-                createArticleCarouselWithBanner();
-                break;
-            default:
-                console.log("view is not defined");
-        }
 
-        function createArticleListView(finalWrapper) {
-            var data = App.json.data,
-                wrapper = document.createElement('div');
-                
-            for (var i = 0; i < data.length; i++) {
-                wrapper.appendChild(App.createArticle(data[i]));
+    function ViewLogic() {
+
+        var views = {
+                "articleList": createArticleListView,
+                "carousel": createArticleCarouselView,
+                "carouselWithBanner": createArticleCarouselWithBanner
+            },
+            data = App.json.data;
+
+        function create(viewType) {
+            var view,
+                viewFunc = views[viewType];
+
+            cleanView();
+
+            if (viewFunc) {
+                view = viewFunc();
+                document.body.appendChild(view);
             }
-            
-            finalWrapper = finalWrapper || document.body;
-            finalWrapper.appendChild(wrapper);
-            return finalWrapper;
+            else {
+                console.log("view not found");
+            }
         }
 
-        function createArticleCarouselView(finalWrapper) {
-            var data = App.json.data,
-                wrapper = App.createCarouselWrapper(),
-                leftButton = document.createElement('button'),
-                rightButton = document.createElement('button'),
-                itemsWrapper = App.createCarouselItemsWrapper();
+
+        function createArticleListView() {
+            var wrapper = document.createElement('div');
+
+            for (var i = 0; i < data.length; i++) {
+                wrapper.appendChild(App.Article.create(data[i]));
+            }
+
+            return wrapper;
+        }
+
+        function createArticleCarouselView() {
+            var ArticleCarousel = App.ArticleCarousel,
+                wrapper = ArticleCarousel.createCarouselWrapper(),
+                leftButton = ArticleCarousel.createSliderButton("left"),
+                rightButton = ArticleCarousel.createSliderButton("right"),
+                itemsWrapper;
+
+            itemsWrapper = createArticleListView();
+            itemsWrapper = ArticleCarousel.setCssForItemsWrapper(itemsWrapper);
+            itemsWrapper = ArticleCarousel.setCarouselView(itemsWrapper);
             
-            wrapper.appendChild(createArticleListView(itemsWrapper));
-            
-            App.resizeItems(wrapper.firstChild);
-            
-            wrapper.insertBefore(App.createSliderButton("left", data, wrapper, itemsWrapper ), wrapper.childNodes[0]);
-            wrapper.appendChild(App.createSliderButton("right", data, wrapper, itemsWrapper ));
-            
-            finalWrapper = finalWrapper || document.body;
-            return finalWrapper.appendChild(wrapper);
+            itemsWrapper.insertBefore(leftButton, itemsWrapper.childNodes[0]);
+            itemsWrapper.appendChild(rightButton);
+
+            return itemsWrapper;
         }
 
         function createArticleCarouselWithBanner() {
@@ -57,5 +62,12 @@
                 body.removeChild(body.firstChild);
             }
         }
+
+        return {
+            create: create
+        };
     }
+
+    App.ViewLogic = ViewLogic();
+
 })();
